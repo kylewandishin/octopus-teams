@@ -16,7 +16,6 @@ app.get('/*', (req, res, next) => {
   }
 });
 // // MySQL configuration
-console.log(process.env.INFO)
 // Connect to the MySQL server
 mysql.connect({
   server: process.env.SERVER,

@@ -24,6 +24,7 @@ function App() {
               <Route path="/" element={<Home/>}/>
               <Route path="/signin" element={<Signin/>}/>
               <Route path="/Dashboard" element={<Dashboard/>}/>
+              <Route path="/Statistics" element={<Statistics/>}/>
               {/* <Route path="/statistics" element={
               <main className='content'>
                 <Topbar/> 

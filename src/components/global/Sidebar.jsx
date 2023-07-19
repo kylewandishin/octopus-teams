@@ -40,132 +40,159 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
     onLevelFilterChange,
     onAssignmentFilterChange,
   }) => {
-  const [assignments, setAssignments] = useState([]);
-  const [levels, setLevels] = useState([]);
-  const [cities, setCities] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/assignments')
-      .then((response) => response.json())
-      .then((data) => {
-        const assignmentData = data.recordset.map((item) => item.Assignment_Details);
-        setAssignments(assignmentData);
-      })
-      .catch((error) => {
-        console.error('Error fetching assignments:', error);
-      });
-
-    fetch('/api/levels')
-      .then((response) => response.json())
-      .then((data) => {
-        const levelData = data.recordset.map((item) => item.Level);
-        setLevels(levelData);
-      })
-      .catch((error) => {
-        console.error('Error fetching levels:', error);
-      });
-
-    fetch('/api/cities')
-      .then((response) => response.json())
-      .then((data) => {
-        const cityData = data.recordset.map((item) => item.City);
-        setCities(cityData);
-      })
-      .catch((error) => {
-        console.error('Error fetching cities:', error);
-      });
-  }, []);
-
-    const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [selected, setSelected] = useState("Dashboard");
-    const [personName, setPersonName] = useState([]);
+    const [assignments, setAssignments] = useState([]);
+    const [levels, setLevels] = useState([]);
+    const [cities, setCities] = useState([]);
   
+    useEffect(() => {
+      Promise.all([
+        fetch('/api/assignments').then((response) => response.json()),
+        fetch('/api/levels').then((response) => response.json()),
+        fetch('/api/cities').then((response) => response.json())
+      ])
+        .then(([assignmentsData, levelsData, citiesData]) => {
+          const assignmentData = assignmentsData.recordset.map((item) => item.Assignment_Details);
+          const levelData = levelsData.recordset.map((item) => item.Level);
+          const cityData = citiesData.recordset.map((item) => item.City);
+          setAssignments(assignmentData);
+          setLevels(levelData);
+          setCities(cityData);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    }, []);
+    
     const [levelFilter, setLevelFilter] = useState([]);
     const [cityFilter, setCityFilter] = useState([]);
     const [assignmentFilter, setAssignmentFilter] = useState([]);
-
-    const handleLevelChange = ({value}) => {
-      console.log(value)
-      onLevelFilterChange(value);
-    };
   
-    const handleCityChange = (event) => {
-      const value = event.target.value;
-      console.log(value)
-      setCityFilter(value);
-      onCityFilterChange(value);
-    };
-  
-    const handleAssignmentChange = (event) => {
-      const value = event.target.value;
+    const handleAssignmentChange = (value) => {
       setAssignmentFilter(value);
-      onAssignmentFilterChange(value);
+      // filterCards();
     };
-
-    return (
-      <Box
-      borderRight="0.1px solid rgba(0,0,0,0.15)"
-        sx={{
-          "& .pro-sidebar-inner": {
-            background: `${colors.primary[400]} !important`,
-          },
-          "& .pro-icon-wrapper": {
-            backgroundColor: "transparent !important",
-          },
-          "& .pro-inner-item": {
-            padding: "5px 35px 5px 20px !important",
-          },
-          "& .pro-inner-item:hover": {
-            color: "#868dfb !important",
-          },
-          "& .pro-menu-item.active": {
-            color: "#6870fa !important",
-          },
-        }}
-      >
-        <ProSidebar collapsed={isCollapsed}>
-          <Menu iconShape="square">
-            {/* LOGO AND MENU ICON */}
-            <MenuItem
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              icon={isCollapsed ? <img src={logo} width="30px" mt="-10px"/> : undefined}
-              style={{
-                margin: "10px 0 20px 0",
-                color: colors.grey[100],
-              }}
-            >
+    
+    const handleLevelChange = (value) => {
+      setLevelFilter(value);
+      // filterCards();
+    };
+    
+    const handleCityChange = (value) => {
+      setCityFilter(value);
+      // filterCards();
+    };  
+    // const [value, setValue] = useState([]);
+  
+    // ...
+  
+  useEffect(() => {
+    console.log("HERE")
+    const filterCards = () => {
+      // Filter the cards based on the selected filters
+      let filtered = [...cards]; // Create a copy of the cards array
+  
+      if (levelFilter.length > 0) {
+        filtered = filtered.filter((card) => levelFilter.includes(card.Level));
+      }
+  
+      if (cityFilter.length > 0) {
+        filtered = filtered.filter((card) => cityFilter.includes(card.City));
+      }
+  
+      if (assignmentFilter.length > 0) {
+        filtered = filtered.filter((card) =>
+          assignmentFilter.includes(card.Assignment_Details)
+        );
+      }
+  
+      setFilteredCards(filtered);
+    };
+  
+    filterCards();
+  }, [levelFilter, cityFilter, assignmentFilter, cards]);
+  
+  // ...
+  
+        
+      return(
+           <Box
+        borderRight="0.1px solid rgba(0,0,0,0.15)"
+          sx={{
+            "& .pro-sidebar-inner": {
+              background: `${colors.primary[400]} !important`,
+            },
+            "& .pro-icon-wrapper": {
+              backgroundColor: "transparent !important",
+            },
+            "& .pro-inner-item": {
+              padding: "5px 35px 5px 20px !important",
+            },
+            "& .pro-inner-item:hover": {
+              color: "#868dfb !important",
+            },
+            "& .pro-menu-item.active": {
+              color: "#6870fa !important",
+            },
+          }}
+        >
+          <ProSidebar collapsed={isCollapsed}>
+            <Menu iconShape="square">
+              {/* LOGO AND MENU ICON */}
+              <MenuItem
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                icon={isCollapsed ? <img src={logo} width="30px" mt="-10px"/> : undefined}
+                style={{
+                  margin: "10px 0 20px 0",
+                  color: colors.grey[100],
+                }}
+              >
+                {!isCollapsed && (
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    ml="15px"
+                  >
+                  
+                    <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                      <img src={logo} width="30px" mt="-10px"/><Box ml="1px" fontSize="34px" color={colors.grey[400]}>CTOPUS</Box>
+                    </IconButton>
+                  </Box>
+                )}
+              </MenuItem>
+    
               {!isCollapsed && (
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  ml="15px"
-                >
-                
-                  <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                    <img src={logo} width="30px" mt="-10px"/><Box ml="1px" fontSize="34px" color={colors.grey[400]}>CTOPUS</Box>
-                  </IconButton>
+                <Box mb="25px" paddingLeft={isCollapsed ? undefined : "10%"}>
+                  <TuneOutlined fontSize="100px"/><Box className="filters" fontSize="16px">
+                      Filters
+                  </Box>
+                  <Box className="dropdowns" ml="-10px" color={colors.grey[100]} width="200px" mt="10px">
+                  <ChipSelect
+                    list={cities}
+                    value={cityFilter}
+                    funct={handleCityChange}
+                    name="Cities"
+                  />
+                  <ChipSelect
+                    list={levels}
+                    value={levelFilter}
+                    funct={handleLevelChange}
+                    name="Positions"
+                  />
+                  <ChipSelect
+                    list={assignments}
+                    value={assignmentFilter}
+                    funct={handleAssignmentChange}
+                    name="Assignments"
+                  />
+  
+                  </Box>
                 </Box>
               )}
-            </MenuItem>
-  
-            {!isCollapsed && (
-              <Box mb="25px" paddingLeft={isCollapsed ? undefined : "10%"}>
-                <TuneOutlined fontSize="100px"/><Box className="filters" fontSize="16px">
-                    Filters
-                </Box>
-                <Box className="dropdowns" ml="-10px" color={colors.grey[100]} width="200px" mt="10px">
-                    <ChipSelect list={cities} value={cityFilter} onChange={() => handleCityChange} name="Cities"/>
-                    <ChipSelect list={levels} value={levelFilter} onChange={console.log("HELLO")} name="Positions"/>
-                    <ChipSelect list={assignments} value={assignmentFilter} onChange={handleAssignmentChange} name="Assignments"/>
-                </Box>
-              </Box>
-            )}
-          </Menu>
-        </ProSidebar>
-      </Box>
+            </Menu>
+          </ProSidebar>
+        </Box>
     );
   };
   

@@ -10,7 +10,7 @@ this command will install yarn to this directory alternativley use "`npm i -g ya
 
 <a href="https://yarnpkg.com/">yarn</a> is a package manager similar to npm but is what I used for this projects dependencies
 
-### `yarn add`
+### `npm i`
 
 this command will install all used dependencies so the project will run
 
