@@ -12,12 +12,20 @@ import TuneOutlined from "@mui/icons-material/TuneOutlined"
 import logo from '../../assets/octopus-logo-new.png'
 import ChipSelect from "../global/dropdown/index.jsx"
 import Topbar from "../global/Topbar";
+import { useMsal } from '@azure/msal-react';
 
 // const socket = io('http://localhost:3001');
 
 const Dashboard = () => {
     // const filters = getFilters()
-  
+    const { instance, accounts } = useMsal();
+
+  useEffect(() => {
+    if (!accounts.length) {
+      instance.loginRedirect();
+    }
+  }, [instance, accounts]);
+
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [isCollapsed, setIsCollapsed] = useState(false);

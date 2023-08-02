@@ -1,30 +1,23 @@
 # Set Up
 
-### make sure to fill out .env in ./backend as it will be required to make a connection to azure.
+## check dependencies 
 
-## install dependencies
+### project files and folders
+open a terminal and navigate to your projects main directory. then run ```dir``` if on windows command prompt or ```ls``` on unix terminal to ensure you see the folders:
+- src
+- backend
+- public
+if you see these 3 you are in the correct location (there can be a few more)
 
-### `npm i yarn`
+### node/npm/yarn dependencies
+run ```node -v``` in your terminal to make sure it is installed. if you get an error please install with this <a href="https://nodejs.org/it/download">link</a>
+run ```npm -v``` in your terminal to make sure it is installed (it should be if you have node. if you get an error refer to the npm documentation for supporte node versions).
 
-this command will install yarn to this directory alternativley use "`npm i -g yarn`" to install globaly
+run ```npm i``` to install all dependencies for this app
 
-<a href="https://yarnpkg.com/">yarn</a> is a package manager similar to npm but is what I used for this projects dependencies
+## run locally
+to run locally, I have created a custom command called ```npm run make``` it is the same as ```npm run build``` (this creates a build version of the most recent version of the code) then running ```node ./backend/server.js``` (start the server on build version you just created)
 
-### `npm i`
-
-this command will install all used dependencies so the project will run
-
-## run on local host without any backend
-
-### `yarn start`
-
-this command opens the project on an open port of localhost.
-
-
-## run on local host with backend
-
-### `npm run build`
-this command will create a built version of the react app that we can access from our node server.
-
-### `node ./backend/server.js`
-this command will start the node server and host the build react app on localhost default port.
+## run locally (NO BACKEND OR API ACCESS)
+unfortunatley we cannot run a constantly updating version of this app with api access for testing but if you would like to edit front end elements i recomend runnning ```npm start```
+```npm start``` creates a local version with no backend but will update after any file is changed for a live editing enviroment.
