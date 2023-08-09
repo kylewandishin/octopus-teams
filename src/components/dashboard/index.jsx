@@ -4,6 +4,7 @@ import { Box, Grid } from "@mui/material";
 import Card from './card'
 import React, { useEffect, useState } from 'react';
 import Loader from "react-loaders"
+import "../../loaders.scss"
 // import { useEffect, useState } from "react"
 import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar'
 import 'react-pro-sidebar/dist/css/styles.css'
@@ -12,19 +13,13 @@ import TuneOutlined from "@mui/icons-material/TuneOutlined"
 import logo from '../../assets/octopus-logo-new.png'
 import ChipSelect from "../global/dropdown/index.jsx"
 import Topbar from "../global/Topbar";
-import { useMsal } from '@azure/msal-react';
+import { useMsal } from "@azure/msal-react";
+
 
 // const socket = io('http://localhost:3001');
 
 const Dashboard = () => {
     // const filters = getFilters()
-    const { instance, accounts } = useMsal();
-
-  useEffect(() => {
-    if (!accounts.length) {
-      instance.loginRedirect();
-    }
-  }, [instance, accounts]);
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -32,7 +27,21 @@ const Dashboard = () => {
     const [cards, setCards] = useState([]);
     const [filteredCards, setFilteredCards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { instance } = useMsal();
+    const [accounts, setAccounts] = useState([]);
 
+    useEffect(() => {
+      const fetchAccounts = async () => {
+        try {
+          const accountList = await instance.getAllAccounts();
+          setAccounts(accountList);
+        } catch (error) {
+          console.error('Error fetching accounts:', error);
+        }
+      };
+
+      fetchAccounts();
+    }, [instance]);
     useEffect(() => {
       fetch('/api/cards')
         .then((response) => response.json())
@@ -92,7 +101,9 @@ const Dashboard = () => {
   // const [value, setValue] = useState([]);
 
   // ...
-
+useEffect(() => {
+console.warn(accounts)
+},[accounts])
 useEffect(() => {
   console.log("HERE")
   const filterCards = () => {
@@ -210,7 +221,7 @@ useEffect(() => {
           </Box>
           <Box className='grid-cont' gap="2rem" m="-0.5rem 0 0 2rem" overflow='scroll' height='87%'>    
               {isLoading ?  
-              <Loader type="pacman" style={{zIndex:"999999999999999"}} />
+              <Loader type="pacman" />
               :
               <Grid container xs={12} gap='2rem' pt='25px' pb='25px'>
                   {filteredCards

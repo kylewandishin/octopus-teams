@@ -86,7 +86,6 @@ const Dashboard = () => {
   // ...
 
 useEffect(() => {
-  console.log("HERE")
   const filterCards = () => {
     // Filter the cards based on the selected filters
     let filtered = [...cards]; // Create a copy of the cards array
@@ -195,6 +194,7 @@ useEffect(() => {
       </Box>
         <main className='content'>
           <Topbar/> 
+          {<Loader type="pacman"/> ? isLoading : <></>}
           <Box ml='1.5rem' mt='1rem' fontSize='24' mb='1rem'>My Team: 
               <Box justifyContent='center' ml='3.6rem' mt='-1.3rem' textAlign='center' height='20px' width='30px' borderRadius='20px' backgroundColor={colors.grey[700]} opcaity='0.5'>
               {filteredCards.length}

@@ -1,38 +1,42 @@
-import React from 'react'
-import './auth.css'
-import { Box, useTheme } from '@mui/material'
-import { tokens } from '../../../theme'
-import logo from '../../../assets/octopus-logo-new.png'
-const Signin = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  return (
-    <div>
-      <Box class="title-box" position="absolute" left="50%">
-          <Box display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                > <img src={logo} width="40px" mt="-15px"/><Box ml="5px" fontSize="44px" color={colors.grey[100]}>Octopus Teams</Box></Box>
-      </Box>
+import React, { useEffect, useState } from 'react';
+import { useIsAuthenticated, useMsal } from '@azure/msal-react';
+import { Box } from '@mui/material';
+import {Loader} from 'react-loaders';
+import "../../../loaders.scss"
+import { useNavigate } from 'react-router-dom';
+function Signin() {
+  const { instance, accounts } = useMsal();
+  const history = useNavigate();
 
-      <div class="login-box">
-      <form>
-        <div class="user-box">
-          <input type="text" name="" required=""/>
-          <label>Username</label>
-        </div>
-        <div class="user-box">
-          <input type="password" name="" required=""/>
-          <label>Password</label>
-        </div><center>
-        <a href="#">
-                SEND
-            <span></span>
-        </a></center>
-      </form>
-      </div>
-    </div>
-  )
+  useEffect(()=>{
+    const checkAuthenticatedAndRedirect = async () => {
+      try {
+        // Check if there's an ongoing interaction
+        const accounts = instance.getAllAccounts();
+        console.log(accounts)
+        if (accounts.length === 0) {
+          // User is not authenticated, initiate the login process
+          await instance.loginRedirect();
+        } else {
+          // User is already authenticated, redirect to dashboard
+          console.warn(accounts)
+          history(-1); // Redirect to the dashboard route
+        }
+      } catch (error) {
+        console.error('Error during login:', error);
+      }
+    };
+
+    checkAuthenticatedAndRedirect();
+  },[instance])
+
+
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100%" width="100%">
+      <Loader type="pacman" /> 
+      <h2>Redirecting to Microsoft authentication...</h2>
+    </Box>
+  );
 }
 
-export default Signin
+export default Signin;

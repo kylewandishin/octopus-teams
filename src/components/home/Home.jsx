@@ -17,7 +17,7 @@ const Home = () => {
                 </Box>
                 <Box className='buttons' display="flex" ml="67%" mt="-18px" mr="1rem" mb='-4px'>
                     <Box className='Signin'>
-                        <IconButton sx={{borderRadius:"0px", height:"100%", pl:"10px",pr:"15px", color:colors.grey[100] }}>Log in</IconButton>
+                    <a href="/dashboard"><IconButton sx={{borderRadius:"0px", height:"100%", pl:"10px",pr:"15px", color:colors.grey[100] }} >Log in</IconButton></a>
                     </Box>
                     <Box className='GetStated'>
                     <IconButton sx={{width:"8.5rem", borderRadius:"0px", height:"100%", p:"10px", backgroundColor: colors.blueAccent[600]}}>Get Started</IconButton>
